@@ -6,7 +6,7 @@ library(zoo)
 
 
 # trial code on 2014 for now
-workbook_2014 <- xlsx_cells("/Volumes/GoogleDrive/My Drive/NuWCRU/Analysis/emhedlin/pefa.surv/data/test.xlsx")
+workbook_2014 <- xlsx_cells("data/sheet_2014.xlsx")
 
 
 # lay date ----------------------------------------------------------------
@@ -55,3 +55,5 @@ i = 2
 
 # various info to be pulled from comment cell
 
+workbook_2014 %>% 
+  filter(!is.na(character) & col %in% 19:25 & row %in% 15:20) 
