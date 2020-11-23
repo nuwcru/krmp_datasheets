@@ -55,5 +55,8 @@ i = 2
 
 # various info to be pulled from comment cell
 
+# this is going to take some creativity...
 workbook_2014 %>% 
-  filter(!is.na(character) & col %in% 19:25 & row %in% 15:20) 
+  filter(col %in% 18 & row %in% 15) %>%
+  select(sheet, character) %>%
+  filter(sheet != "Ex" & !is.na(character))
