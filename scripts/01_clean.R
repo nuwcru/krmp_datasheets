@@ -23,11 +23,8 @@ lay_date <- workbook_2014 %>%
 hatch_date <- workbook_2014 %>% 
   filter(!is.na(date) & col %in% 3:6 & row %in% 15:20) 
 
-View(workbook_2014 %>% 
-  filter(sheet == "Site8") %>%
-  filter(col %in% 9:14 & row %in% 1:30))
-
 # Chick weights -----------------------------------------------------------
+#WIP - eh
 
 sheet_list <- workbook_2014 %>% 
   filter(col %in% 9:14 & row %in% 6:30) %>%
@@ -37,10 +34,12 @@ sheet_list <- workbook_2014 %>%
   group_split()
 
 for (i in 1:length(sheet_list)){
+i = 2
   sheet_list[[i]] <- sheet_list[[i]] %>%
     mutate(date = na.locf(date)) %>%
+    filter(!is.na(numeric)) %>%
     filter(numeric < 3000) %>%
-    do({year(.$date)<-2014; .})
+    do({year(.$date)<-2014; .}) # some years in the dates are incorrect
 }
 
 
