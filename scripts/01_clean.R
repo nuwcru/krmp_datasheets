@@ -6,7 +6,7 @@ library(zoo)
 
 
 # trial code on 2014 for now
-workbook_2014 <- xlsx_cells("data/sheet_2014.xlsx")
+workbook_2014 <- xlsx_cells("data/sheet_2013.xlsx")
 
 
 # lay date ----------------------------------------------------------------
@@ -18,7 +18,7 @@ lay_date <- workbook_2014 %>%
   select(site = sheet, laydate = date) %>%
   mutate(site = str_replace(site, " ",  "")) %>%
   mutate(site = str_replace(tolower(site), "site", "")) %>%
-  do({year(.$laydate)<-2014; .}) 
+  do({year(.$laydate)<-2013; .}) 
 
 
 lay_date <- lay_date %>% 
@@ -36,7 +36,7 @@ hatch_date <- workbook_2014 %>%
   select(site = sheet, hatchdate = date) %>%
   mutate(site = str_replace(site, " ",  "")) %>%
   mutate(site = str_replace(tolower(site), "site", "")) %>%
-  do({year(.$hatchdate)<-2014; .}) 
+  do({year(.$hatchdate)<-2013; .}) 
 
 hatch_date <- hatch_date %>% 
   group_by(site)  %>% 
@@ -50,6 +50,7 @@ lay_date %>% left_join(hatch_date, by = c("site", "nestling_id")) %>%
   arrange(desc(incubation_time))
 
 
+
 # Chick weights -----------------------------------------------------------
 #WIP - eh
 
@@ -61,7 +62,6 @@ sheet_list <- workbook_2014 %>%
   group_split()
 
 for (i in 1:length(sheet_list)){
-i = 2
   sheet_list[[i]] <- sheet_list[[i]] %>%
     mutate(date = na.locf(date)) %>%
     filter(!is.na(numeric)) %>%
@@ -79,6 +79,29 @@ i = 2
 
 
 # comment -----------------------------------------------------------------
+
+str_clean <- function(string){
+  # Lowercase
+  temp <- tolower(string)
+  # Remove everything that is not a number or letter (may want to keep more 
+  # stuff in your actual analyses). 
+  temp <- stringr::str_replace_all(temp,"[^a-zA-Z\\s]", " ")
+  # Shrink down to just one white space
+  temp <- stringr::str_replace_all(temp,"[\\s]+", " ")
+  # Split it
+  temp <- stringr::str_split(temp, " ")[[1]]
+  # Get rid of trailing "" if necessary
+  indexes <- which(temp == "")
+  if(length(indexes) > 0){
+    temp <- temp[-indexes]
+  } 
+  return(temp)
+}
+
+
+
+
+
 occupied_sites <- c(100,119,12, 19, 20, 28,3, 
                     33, 33,  35, 44, 47, 5,50,
                     51,59,63,65,       
@@ -91,7 +114,10 @@ occupied_sites <- c(100,119,12, 19, 20, 28,3,
 x <- workbook_2014 %>% 
   filter(col %in% 18 & row %in% 15) %>%
   select(sheet, character) %>%
-  filter(sheet != Ex,& !is.na(character))
+  filter(!is.na(character))
+
+str_clean(x[2,2])
+
 
 # string length should be indicative of occupancy, but is it reliable
 x %>% filter(str_length(character) > 500)
