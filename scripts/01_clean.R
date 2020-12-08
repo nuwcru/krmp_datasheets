@@ -6,7 +6,7 @@ library(zoo)
 
 
 # trial code on 2014 for now
-workbook_2014 <- xlsx_cells("data/sheet_2013.xlsx")
+workbook_2014 <- xlsx_cells("data/sheet_2014.xlsx")
 
 
 # lay date ----------------------------------------------------------------
@@ -83,9 +83,8 @@ for (i in 1:length(sheet_list)){
 str_clean <- function(string){
   # Lowercase
   temp <- tolower(string)
-  # Remove everything that is not a number or letter (may want to keep more 
-  # stuff in your actual analyses). 
-  temp <- stringr::str_replace_all(temp,"[^a-zA-Z\\s]", " ")
+  # Remove everything that is not a number or letter
+  #temp <- stringr::str_replace_all(temp,"[^a-zA-Z\\s]", " ")
   # Shrink down to just one white space
   temp <- stringr::str_replace_all(temp,"[\\s]+", " ")
   # Split it
@@ -99,15 +98,6 @@ str_clean <- function(string){
 }
 
 
-
-
-
-occupied_sites <- c(100,119,12, 19, 20, 28,3, 
-                    33, 33,  35, 44, 47, 5,50,
-                    51,59,63,65,       
-                    67,72,75,76,77,78,       
-                    79,8,85,88,95,97)
-
 # various info to be pulled from comment cell
 
 # this is going to take some creativity...
@@ -116,8 +106,29 @@ x <- workbook_2014 %>%
   select(sheet, character) %>%
   filter(!is.na(character))
 
-str_clean(x[2,2])
 
+dates[,1:10] <- c()
+for (i in 1:length(test)){
+    if (str_detect(test[i],"(\\d+):")){
+      dates[i,1] <- paste0(test[i-1], "-", str_replace(test[i], ":", ""))}
+    else {dates[i,i] <- paste(test[i])}
+    }
+
+    }
+  
+
+
+for (j in which(str_detect(test,"(\\d+):"))){
+  print(j)
+  
+  }
+
+test <- str_clean(x[2,2])
+test[which(str_detect(test, "(\\d+):"))[1]]
+
+
+str_extract_all(x[2,2], "(\\d+)", simplify = FALSE)
+str_extract(tolower(x[2,2]),"\\w+:\\s\\d+")
 
 # string length should be indicative of occupancy, but is it reliable
 x %>% filter(str_length(character) > 500)
